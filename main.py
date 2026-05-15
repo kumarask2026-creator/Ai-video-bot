@@ -25,13 +25,14 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     try:
         output = replicate.run(
-            "luma/dream-machine",
+            "stability-ai/stable-video-diffusion",
             input={
-                "prompt": f"{prompt} style, animate this image smoothly",
-                "image": open("input.jpg", "rb")
+                "image": open("input.jpg", "rb"),
+                "motion_bucket_id": 127,
+                "fps": 6
             }
         )
-        await update.message.reply_video(output[0])
+        await update.message.reply_video(output)
     except Exception as e:
         await update.message.reply_text(f"Error: {e}")
     
