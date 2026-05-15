@@ -45,7 +45,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         # Replicate API එක ක්‍රියාත්මක කිරීම
         output = replicate.run(
-            "stability-ai/stable-video-diffusion",
+                    "aicapcut/stable-video-diffusion-img2vid-xt-optimized",
             input={
                 "image": open(file_path, "rb"),
                 "prompt": prompt + ", smooth motion, cinematic",
