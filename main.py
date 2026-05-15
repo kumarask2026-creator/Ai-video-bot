@@ -28,7 +28,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     try:
         output = replicate.run(
-                "stability-ai/stable-video-diffusion-img2vid"
+                "stability-ai/stable-video-diffusion-img2vid",
     input={
                 "image": open("input.jpg", "rb"),
                 "prompt": prompt + ", smooth motion, cinematic",
