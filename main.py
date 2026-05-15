@@ -25,11 +25,14 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     try:
         output = replicate.run(
-            "stability-ai/stable-video-diffusion",
-            input={
-                "image": open("input.jpg", "rb"),
-                "motion_bucket_id": 127,
-                "fps": 6
+    "stability-ai/sdxl",
+    input={
+        "image": open("input.jpg", "rb"),
+        "prompt": prompt + ", smooth motion, cinematic",
+        "num_frames": 25,
+        "motion_bucket_id": 127
+    }
+)
             }
         )
         await update.message.reply_video(output)
