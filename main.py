@@ -1,19 +1,22 @@
-import replicate
 import os
+import logging
 from telegram import Update
-from telegram.ext import Application, MessageHandler, filters, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+import replicate
 
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN")
+logging.basicConfig(level=logging.INFO)
+
+TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Photo ekak yawapan, passe Racing/Slowmo kiyala type karapan")
+    await update.message.reply_text("Hey! Photo ekak yawapan, passe prompt ekak denna.")
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Photo lebuna ✅ Dan prompt eka type karapan: Racing, Slowmo, etc")
     photo = update.message.photo[-1]
     file = await context.bot.get_file(photo.file_id)
     await file.download_to_drive("input.jpg")
+    
+    await update.message.reply_text("Photo lebuna ✅ Dan prompt eka type karapan:\nRacing, Slowmo, etc")
     context.user_data["waiting_for_prompt"] = True
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -25,14 +28,12 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     try:
         output = replicate.run(
-    "stability-ai/sdxl",
-    input={
-        "image": open("input.jpg", "rb"),
-        "prompt": prompt + ", smooth motion, cinematic",
-        "num_frames": 25,
-        "motion_bucket_id": 127
-    }
-)
+            "stability-ai/sdxl",
+            input={
+                "image": open("input.jpg", "rb"),
+                "prompt": prompt + ", smooth motion, cinematic",
+                "num_frames": 25,
+                "motion_bucket_id": 127
             }
         )
         await update.message.reply_video(output)
@@ -41,12 +42,12 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     context.user_data["waiting_for_prompt"] = False
 
-def main():
-    app = Application.builder().token(TELEGRAM_TOKEN).build()
-    app.add_handler(MessageHandler(filters.COMMAND & filters.Regex("^/start$"), start))
+if __name__ == "__main__":
+    app = ApplicationBuilder().token(TOKEN).build()
+    
+    app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
+    
+    print("Started polling")
     app.run_polling()
-
-if __name__ == "__main__":
-    main()
