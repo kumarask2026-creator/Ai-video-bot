@@ -28,8 +28,8 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     try:
         output = replicate.run(
-            "stability-ai/stable-video-diffusion-img2vid:3f708dad6c6394f3f59e5acfe3678d222d32b3e12c0fca4245cb87f23e3f6b8b"
-            input={
+            "stability-ai/stable-video-diffusion-img2vid:3f708dad6c6394f3f59e5acfe3678d222d32b3e12c0fca4245cb87f23e3f6b8b",
+    input={
                 "image": open("input.jpg", "rb"),
                 "prompt": prompt + ", smooth motion, cinematic",
                 "num_frames": 25,
